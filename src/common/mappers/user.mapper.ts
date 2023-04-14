@@ -12,7 +12,6 @@ export function toIUser(user: User): IUser {
     email: {
       address: user.email.address,
       verified_at: user.email.verified_at,
-      _id: user.email._id,
     },
     avatar_url: user.avatar_url,
     profile_url: user.profile_url,

@@ -1,5 +1,3 @@
-import { Types } from 'mongoose';
-
 export interface IUser {
   account_id: string;
   first_name: string;
@@ -10,7 +8,6 @@ export interface IUser {
   email: {
     address: string;
     verified_at: Date | null;
-    _id: Types.ObjectId;
   };
   avatar_url: string;
   profile_url: string;
