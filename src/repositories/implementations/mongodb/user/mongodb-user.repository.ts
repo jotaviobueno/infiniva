@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { UserRepository } from 'src/repositories/abstracts/user/user.repository';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateUserDto } from 'src/modules/user/dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
@@ -24,12 +24,28 @@ export class MongodbUserRepository implements UserRepository {
     return await user.save();
   }
 
+  async findByUserId(userId: Types.ObjectId): Promise<User> {
+    return await this.model.findOne({ _id: userId, deletedAt: null });
+  }
+
   async forceFindByEmail(email: string): Promise<User> {
     return await this.model.findOne({ 'email.address': email });
   }
 
+  async findByEmail(email: string): Promise<User> {
+    return await this.model.findOne({ email, deletedAt: null });
+  }
+
   async forceFindByUsername(username: string): Promise<User> {
     return await this.model.findOne({ username });
+  }
+
+  async findByUsername(username: string): Promise<User> {
+    return await this.model.findOne({ username, deletedAt: null });
+  }
+
+  async findByAccountId(account_id: string): Promise<User> {
+    return await this.model.findOne({ account_id, deletedAt: null });
   }
 
   async searchByName(
