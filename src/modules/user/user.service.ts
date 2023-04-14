@@ -35,19 +35,13 @@ export class UserService {
   async searchByName(name: string, offsetAndLimit: IOffsetAndLimit) {
     const users = await this.userRepository.searchByName(name, offsetAndLimit);
 
-    const { nextUrl, previuousUrl } = this.paginationService.handlePagination(
+    const pagination = this.paginationService.handlePagination(
+      users,
       offsetAndLimit,
-      users.length,
     );
 
     return {
-      nextUrl,
-      previuousUrl,
-      limit: offsetAndLimit.limit,
-      offset: offsetAndLimit.offset,
-      total: users.length,
-      data_len: users.length,
-      data: users,
+      ...pagination,
     };
   }
 
