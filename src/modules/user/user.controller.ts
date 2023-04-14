@@ -31,9 +31,9 @@ export class UserController {
     return this.userService.searchByName(name, offsetAndLimit);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
+  @Get(':account_id')
+  findByAccountId(@Param('account_id') account_id: string) {
+    return this.userService.findByAccountId(account_id);
   }
 
   @Patch(':id')
