@@ -21,4 +21,12 @@ export class MongodbUserRepository implements UserRepository {
 
     return await user.save();
   }
+
+  async forceFindByEmail(email: string): Promise<User> {
+    return await this.model.findOne({ 'email.address': email });
+  }
+
+  async forceFindByUsername(username: string): Promise<User> {
+    return await this.model.findOne({ username });
+  }
 }
