@@ -64,6 +64,14 @@ export class UserService {
     return toIUser(userExist);
   }
 
+  async findByUsername(username: string) {
+    const userExist = await this.handleGetUser({ username });
+
+    if (!userExist) throw new NotFoundException('username not found');
+
+    return toIUser(userExist);
+  }
+
   update(id: number, updateUserDto: UpdateUserDto) {
     return `This action updates a #${id} user`;
   }
