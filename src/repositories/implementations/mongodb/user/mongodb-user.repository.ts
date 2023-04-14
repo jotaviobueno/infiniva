@@ -6,6 +6,7 @@ import { CreateUserDto } from 'src/modules/user/dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
 import { User, UserDocument } from '../schemas/user';
 import { IOffsetAndLimit } from 'src/modules/pagination/interfaces/ioffset-and-limit';
+import { IUsers } from 'src/modules/user/interfaces/iusers';
 
 @Injectable()
 export class MongodbUserRepository implements UserRepository {
@@ -34,7 +35,7 @@ export class MongodbUserRepository implements UserRepository {
   async searchByName(
     name: string,
     { offset, limit }: IOffsetAndLimit,
-  ): Promise<User[]> {
+  ): Promise<IUsers[]> {
     const pagination = [{ $skip: offset }, { $limit: limit }];
     const pipeline = [
       {

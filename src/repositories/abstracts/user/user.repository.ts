@@ -1,5 +1,6 @@
 import { IOffsetAndLimit } from 'src/modules/pagination/interfaces/ioffset-and-limit';
 import { CreateUserDto } from 'src/modules/user/dto/create-user.dto';
+import { IUsers } from 'src/modules/user/interfaces/iusers';
 import { User } from 'src/repositories/implementations/mongodb/schemas/user';
 
 export abstract class UserRepository {
@@ -12,5 +13,5 @@ export abstract class UserRepository {
   abstract searchByName(
     name: string,
     offsetAndLimit: IOffsetAndLimit,
-  ): Promise<User[]>;
+  ): Promise<IUsers[]>;
 }
