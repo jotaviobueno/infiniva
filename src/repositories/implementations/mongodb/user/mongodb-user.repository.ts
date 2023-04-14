@@ -5,6 +5,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { CreateUserDto } from 'src/modules/user/dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
 import { User, UserDocument } from '../schemas/user';
+import { IOffsetAndLimit } from 'src/modules/pagination/interfaces/ioffset-and-limit';
 
 @Injectable()
 export class MongodbUserRepository implements UserRepository {
@@ -28,5 +29,41 @@ export class MongodbUserRepository implements UserRepository {
 
   async forceFindByUsername(username: string): Promise<User> {
     return await this.model.findOne({ username });
+  }
+
+  async searchByName(
+    name: string,
+    { offset, limit }: IOffsetAndLimit,
+  ): Promise<User[]> {
+    const pagination = [{ $skip: offset }, { $limit: limit }];
+    const pipeline = [
+      {
+        $match: {
+          deletedAt: null,
+          $or: [
+            { username: { $regex: name, $options: 'i' } },
+            { first_name: { $regex: name, $options: 'i' } },
+            { last_name: { $regex: name, $options: 'i' } },
+          ],
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          first_name: 0,
+          last_name: 0,
+          email: 0,
+          user_type: 0,
+          bio: 0,
+          password: 0,
+          deletedAt: 0,
+          createdAt: 0,
+          updatedAt: 0,
+          __v: 0,
+        },
+      },
+    ];
+
+    return await this.model.aggregate([...pipeline, ...pagination]);
   }
 }
