@@ -3,10 +3,15 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserRepository } from 'src/repositories/abstracts/user/user.repository';
 import { toIUser } from 'src/common/mappers/user.mapper';
+import { IOffsetAndLimit } from '../pagination/interfaces/ioffset-and-limit';
+import { PaginationService } from '../pagination/pagination.service';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly userRepository: UserRepository) {}
+  constructor(
+    private readonly userRepository: UserRepository,
+    private readonly paginationService: PaginationService,
+  ) {}
 
   async create(createUserDto: CreateUserDto) {
     const emailAlreadyExist = await this.userRepository.forceFindByEmail(
@@ -27,8 +32,23 @@ export class UserService {
     return toIUser(user);
   }
 
-  findAll() {
-    return `This action returns all user`;
+  async searchByName(name: string, offsetAndLimit: IOffsetAndLimit) {
+    const users = await this.userRepository.searchByName(name, offsetAndLimit);
+
+    const { nextUrl, previuousUrl } = this.paginationService.handlePagination(
+      offsetAndLimit,
+      users.length,
+    );
+
+    return {
+      nextUrl,
+      previuousUrl,
+      limit: offsetAndLimit.limit,
+      offset: offsetAndLimit.offset,
+      total: users.length,
+      data_len: users.length,
+      data: users,
+    };
   }
 
   findOne(id: number) {

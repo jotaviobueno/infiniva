@@ -6,10 +6,13 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { ReqOffsetAndLimit } from '../pagination/decorators/req-offset-and-limit';
+import { IOffsetAndLimit } from '../pagination/interfaces/ioffset-and-limit';
 
 @Controller('user')
 export class UserController {
@@ -20,9 +23,12 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
-  @Get()
-  findAll() {
-    return this.userService.findAll();
+  @Get('search')
+  searchByName(
+    @Query('name') name: string,
+    @ReqOffsetAndLimit() offsetAndLimit: IOffsetAndLimit,
+  ) {
+    return this.userService.searchByName(name, offsetAndLimit);
   }
 
   @Get(':id')
