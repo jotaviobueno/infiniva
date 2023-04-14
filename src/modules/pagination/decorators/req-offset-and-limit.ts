@@ -3,10 +3,10 @@ import {
   createParamDecorator,
   ExecutionContext,
 } from '@nestjs/common';
-import { IPagination } from '../interfaces/ipagination';
+import { IOffsetAndLimit } from '../interfaces/ioffset-and-limit';
 
 export const ReqOffsetAndLimit = createParamDecorator(
-  (_, ctx: ExecutionContext): IPagination => {
+  (_, ctx: ExecutionContext): IOffsetAndLimit => {
     const request = ctx.switchToHttp().getRequest();
 
     const validatedRequest = validateRequest(request);
@@ -20,7 +20,7 @@ export const ReqOffsetAndLimit = createParamDecorator(
   },
 );
 
-function validateRequest(request: any): IPagination {
+function validateRequest(request: any): IOffsetAndLimit {
   // eslint-disable-next-line prefer-const
   let limit = request.query.limit;
   // eslint-disable-next-line prefer-const

@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { IPagination } from './interfaces/ipagination';
+import { IOffsetAndLimit } from './interfaces/ioffset-and-limit';
 
 @Injectable()
 export class PaginationService {
-  handlePagination({ baseUrl, limit, offset }: IPagination, total: number) {
+  handlePagination({ baseUrl, limit, offset }: IOffsetAndLimit, total: number) {
     const next = offset + limit;
     const nextUrl =
       next < total ? `${baseUrl}?limit=${limit}&offset=${next}` : null;
