@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
+import { MongodbModule } from './repositories/implementations/mongodb/mongodb.module';
 
 @Module({
-  imports: [],
+  imports: [MongodbModule],
   controllers: [],
   providers: [],
 })
