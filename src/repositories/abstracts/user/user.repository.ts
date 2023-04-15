@@ -30,4 +30,9 @@ export abstract class UserRepository {
     userId: Types.ObjectId,
     updateUserDto: UpdateUserDto,
   ): Promise<UpdateResult>;
+
+  abstract includeTag(
+    userId: Types.ObjectId,
+    tag: string,
+  ): Promise<UpdateResult>;
 }
