@@ -2,7 +2,7 @@ import { Types } from 'mongoose';
 import { IOffsetAndLimit } from 'src/modules/pagination/interfaces/ioffset-and-limit';
 import { CreateUserDto } from 'src/modules/user/dto/create-user.dto';
 import { IUsers } from 'src/modules/user/interfaces/iusers';
-import { User } from 'src/repositories/implementations/mongodb/schemas/user';
+import { User } from 'src/repositories/implementations/mongodb/schemas/user.schema';
 
 export abstract class UserRepository {
   abstract create(createUserDto: CreateUserDto): Promise<User>;
