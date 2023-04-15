@@ -8,5 +8,6 @@ import { PaginationModule } from '../pagination/pagination.module';
   imports: [MongodbModule, PaginationModule],
   controllers: [UserController],
   providers: [UserService],
+  exports: [UserService],
 })
 export class UserModule {}
