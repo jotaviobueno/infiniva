@@ -11,6 +11,7 @@ import { toIUser } from 'src/common/mappers/user.mapper';
 import { IOffsetAndLimit } from '../pagination/interfaces/ioffset-and-limit';
 import { PaginationService } from '../pagination/pagination.service';
 import { GetUserOptions } from './interfaces/get-user-options';
+import { User } from 'src/repositories/implementations/mongodb/schemas/user.schema';
 
 @Injectable()
 export class UserService {
@@ -72,8 +73,8 @@ export class UserService {
     return toIUser(userExist);
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(user: User, updateUserDto: UpdateUserDto) {
+    return;
   }
 
   remove(id: number) {

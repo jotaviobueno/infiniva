@@ -15,6 +15,8 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { ReqOffsetAndLimit } from '../pagination/decorators/req-offset-and-limit';
 import { IOffsetAndLimit } from '../pagination/interfaces/ioffset-and-limit';
 import { AuthGuard } from '@nestjs/passport';
+import { ReqUser } from '../auth/decorators/req-user.decorator';
+import { User } from 'src/repositories/implementations/mongodb/schemas/user.schema';
 
 @Controller('user')
 export class UserController {
@@ -46,10 +48,10 @@ export class UserController {
     return this.userService.findByUsername(username);
   }
 
-  @Patch(':id')
+  @Patch()
   @UseGuards(AuthGuard('jwt'))
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
+  update(@ReqUser() user: User, @Body() updateUserDto: UpdateUserDto) {
+    return this.userService.update(user, updateUserDto);
   }
 
   @Delete(':id')
