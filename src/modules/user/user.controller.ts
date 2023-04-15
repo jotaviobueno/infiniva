@@ -36,13 +36,13 @@ export class UserController {
     return this.userService.searchByName(name, offsetAndLimit);
   }
 
-  @Get('/a/:account_id')
+  @Get('/show/a/:account_id')
   @UseGuards(AuthGuard('jwt'))
   findByAccountId(@Param('account_id') account_id: string) {
     return this.userService.findByAccountId(account_id);
   }
 
-  @Get(':username')
+  @Get('/show/:username')
   @UseGuards(AuthGuard('jwt'))
   findByUsername(@Param('username') username: string) {
     return this.userService.findByUsername(username);
