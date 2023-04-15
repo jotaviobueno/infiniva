@@ -11,12 +11,16 @@ import { toIUser } from 'src/common/mappers/user.mapper';
 import { IOffsetAndLimit } from '../pagination/interfaces/ioffset-and-limit';
 import { PaginationService } from '../pagination/pagination.service';
 import { GetUserOptions } from './interfaces/get-user-options';
-import { User } from 'src/repositories/implementations/mongodb/schemas/user.schema';
+import { IAuthAndUser } from '../auth/interfaces/iauth-and-user';
+import * as bcrypt from 'bcrypt';
+import { AuthRepository } from 'src/repositories/abstracts/auth/auth.repository';
 
 @Injectable()
 export class UserService {
   constructor(
     private readonly userRepository: UserRepository,
+    private readonly authRepository: AuthRepository,
+
     private readonly paginationService: PaginationService,
   ) {}
 
@@ -73,8 +77,29 @@ export class UserService {
     return toIUser(userExist);
   }
 
-  async update(user: User, updateUserDto: UpdateUserDto) {
-    return;
+  async update(authAndUser: IAuthAndUser, updateUserDto: UpdateUserDto) {
+    if (updateUserDto.username) {
+      if (updateUserDto.username === authAndUser.user.username)
+        throw new ConflictException('username is equal');
+
+      const usernameAlreadyExist = await this.handleGetUser({
+        username: updateUserDto.username,
+      });
+
+      if (usernameAlreadyExist)
+        throw new ConflictException('username already exists');
+    }
+
+    if (updateUserDto.password)
+      updateUserDto.password = await bcrypt.hash(updateUserDto.password, 10);
+
+    const update = await this.userRepository.update(
+      authAndUser.user._id,
+      updateUserDto,
+    );
+
+    if (update.modifiedCount === 1 && updateUserDto.password)
+      await this.authRepository.disconnectMany(authAndUser.user._id);
   }
 
   remove(id: number) {
