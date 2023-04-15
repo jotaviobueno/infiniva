@@ -31,7 +31,7 @@ export class StoreService {
     const tag = 'store_owner';
 
     if (!authAndUser.user.user_type.includes(tag))
-      await this.userRepository.includeNewTag(authAndUser.user._id, tag);
+      await this.userRepository.includeTag(authAndUser.user._id, tag);
 
     return toIStore(store);
   }
