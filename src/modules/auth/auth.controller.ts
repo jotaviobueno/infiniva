@@ -8,11 +8,16 @@ import {
   Ip,
   Req,
   UseGuards,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ReqUser } from './decorators/req-user.decorator';
 import { User } from 'src/repositories/implementations/mongodb/schemas/user.schema';
 import { AuthGuard } from '@nestjs/passport';
+import { IAuthAndUser } from './interfaces/iauth-and-user';
+import { ReqOffsetAndLimit } from '../pagination/decorators/req-offset-and-limit';
+import { IOffsetAndLimit } from '../pagination/interfaces/ioffset-and-limit';
 
 @Controller('auth')
 export class AuthController {
@@ -25,17 +30,28 @@ export class AuthController {
   }
 
   @Get()
-  findAll() {
-    return this.authService.findAll();
+  @UseGuards(AuthGuard('jwt'))
+  findAll(
+    @ReqUser() authAndUser: IAuthAndUser,
+    @ReqOffsetAndLimit() offsetAndLimit: IOffsetAndLimit,
+  ) {
+    return this.authService.findAll(authAndUser, offsetAndLimit);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.authService.findOne(+id);
+  @Delete('/disconnect')
+  @UseGuards(AuthGuard('jwt'))
+  @HttpCode(HttpStatus.NO_CONTENT)
+  disconnect(@ReqUser() authAndUser: IAuthAndUser) {
+    return this.authService.disconnect(authAndUser);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.authService.remove(+id);
+  @Delete('/disconnect/many')
+  @UseGuards(AuthGuard('jwt'))
+  @HttpCode(HttpStatus.NO_CONTENT)
+  disconnectMany(
+    @ReqUser() authAndUser: IAuthAndUser,
+    @Body('password') password: string,
+  ) {
+    return this.authService.disconnectMany(authAndUser, password);
   }
 }

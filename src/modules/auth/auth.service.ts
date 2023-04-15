@@ -1,10 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import * as bcrypt from 'bcrypt';
 import { User } from 'src/repositories/implementations/mongodb/schemas/user.schema';
 import { randomUUID } from 'node:crypto';
 import { AuthRepository } from 'src/repositories/abstracts/auth/auth.repository';
 import { JwtService } from '@nestjs/jwt';
+import { IAuthAndUser } from './interfaces/iauth-and-user';
+import { PaginationService } from '../pagination/pagination.service';
+import { IOffsetAndLimit } from '../pagination/interfaces/ioffset-and-limit';
 
 @Injectable()
 export class AuthService {
@@ -13,6 +20,7 @@ export class AuthService {
     private readonly authRepository: AuthRepository,
 
     private readonly jwtService: JwtService,
+    private readonly paginationService: PaginationService,
   ) {}
 
   async create(user: User, address_ip: string, user_agent: string) {
@@ -37,16 +45,37 @@ export class AuthService {
     };
   }
 
-  findAll() {
-    return `This action returns all auth`;
+  async findAll(authAndUser: IAuthAndUser, offsetAndLimit: IOffsetAndLimit) {
+    const sessions = await this.authRepository.findAll(
+      authAndUser.user._id,
+      offsetAndLimit,
+    );
+
+    const pagination = this.paginationService.handlePagination(
+      sessions,
+      offsetAndLimit,
+    );
+
+    return {
+      ...pagination,
+    };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
+  async disconnect(authAndUser: IAuthAndUser) {
+    await this.authRepository.disconnect(authAndUser.auth.access_id);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+  async disconnectMany(authAndUser: IAuthAndUser, password: string) {
+    if (!password) throw new BadRequestException('password is required');
+
+    const passwordIsValid = await bcrypt.compare(
+      password,
+      authAndUser.user.password,
+    );
+
+    if (!passwordIsValid) throw new ForbiddenException('invalid password');
+
+    await this.authRepository.disconnectMany(authAndUser.user._id);
   }
 
   async validateUser(email: string, password: string): Promise<User> {

@@ -8,11 +8,13 @@ import { JWT_SECRET } from 'src/config/jwt';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { LocalStrategy } from './strategies/local.stategy';
 import { CreateAuthValidationMiddleware } from 'src/common/middlewares/create-auth-validation.middleware';
+import { PaginationModule } from '../pagination/pagination.module';
 
 @Module({
   imports: [
     UserModule,
     MongodbModule,
+    PaginationModule,
     JwtModule.register({
       privateKey: JWT_SECRET,
       signOptions: { expiresIn: '1d' },
