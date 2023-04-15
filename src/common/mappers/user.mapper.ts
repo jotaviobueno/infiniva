@@ -1,5 +1,5 @@
 import { IUser } from 'src/modules/user/interfaces/iuser';
-import { User } from 'src/repositories/implementations/mongodb/schemas/user';
+import { User } from 'src/repositories/implementations/mongodb/schemas/user.schema';
 
 export function toIUser(user: User): IUser {
   return {
