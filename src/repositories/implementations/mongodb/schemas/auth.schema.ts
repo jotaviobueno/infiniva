@@ -3,7 +3,7 @@ import { HydratedDocument, Types } from 'mongoose';
 
 export type AuthDocument = HydratedDocument<Auth>;
 
-@Schema()
+@Schema({ timestamps: true })
 export class Auth {
   _id: Types.ObjectId;
 
@@ -30,21 +30,3 @@ export class Auth {
 }
 
 export const AuthSchema = SchemaFactory.createForClass(Auth);
-
-AuthSchema.pre('updateOne', async function (next) {
-  const update = this.getQuery();
-  if (update && update.disconnectedAt) {
-    await this.updateOne(
-      {},
-      {
-        $set: {
-          expirationDate: new Date(
-            update.disconnectedAt.getTime() + 10 * 60 * 1000,
-          ),
-        },
-      },
-    );
-
-    next();
-  }
-});
