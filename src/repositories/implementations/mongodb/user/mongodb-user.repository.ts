@@ -98,4 +98,11 @@ export class MongodbUserRepository implements UserRepository {
       { ...updateUserDto, updatedAt: new Date() },
     );
   }
+
+  async includeTag(userId: Types.ObjectId, tag: string): Promise<UpdateResult> {
+    return await this.model.updateOne(
+      { _id: userId, deletedAt: null },
+      { $push: { user_type: tag } },
+    );
+  }
 }
