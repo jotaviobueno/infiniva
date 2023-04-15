@@ -7,6 +7,8 @@ import * as bcrypt from 'bcrypt';
 import { User, UserDocument } from '../schemas/user.schema';
 import { IOffsetAndLimit } from 'src/modules/pagination/interfaces/ioffset-and-limit';
 import { IUsers } from 'src/modules/user/interfaces/iusers';
+import { UpdateUserDto } from 'src/modules/user/dto/update-user.dto';
+import { UpdateResult } from 'mongodb';
 
 @Injectable()
 export class MongodbUserRepository implements UserRepository {
@@ -85,5 +87,15 @@ export class MongodbUserRepository implements UserRepository {
     ];
 
     return await this.model.aggregate([...pipeline, ...pagination]);
+  }
+
+  async update(
+    userId: Types.ObjectId,
+    updateUserDto: UpdateUserDto,
+  ): Promise<UpdateResult> {
+    return await this.model.updateOne(
+      { _id: userId, deletedAt: null },
+      { ...updateUserDto, updatedAt: new Date() },
+    );
   }
 }
