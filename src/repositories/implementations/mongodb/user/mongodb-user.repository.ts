@@ -4,7 +4,7 @@ import { Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateUserDto } from 'src/modules/user/dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
-import { User, UserDocument } from '../schemas/user';
+import { User, UserDocument } from '../schemas/user.schema';
 import { IOffsetAndLimit } from 'src/modules/pagination/interfaces/ioffset-and-limit';
 import { IUsers } from 'src/modules/user/interfaces/iusers';
 
@@ -33,7 +33,10 @@ export class MongodbUserRepository implements UserRepository {
   }
 
   async findByEmail(email: string): Promise<User> {
-    return await this.model.findOne({ email, deletedAt: null });
+    return await this.model.findOne({
+      'email.address': email,
+      deletedAt: null,
+    });
   }
 
   async forceFindByUsername(username: string): Promise<User> {
