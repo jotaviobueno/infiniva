@@ -1,6 +1,8 @@
+import { UpdateResult } from 'mongodb';
 import { Types } from 'mongoose';
 import { IOffsetAndLimit } from 'src/modules/pagination/interfaces/ioffset-and-limit';
 import { CreateUserDto } from 'src/modules/user/dto/create-user.dto';
+import { UpdateUserDto } from 'src/modules/user/dto/update-user.dto';
 import { IUsers } from 'src/modules/user/interfaces/iusers';
 import { User } from 'src/repositories/implementations/mongodb/schemas/user.schema';
 
@@ -23,4 +25,9 @@ export abstract class UserRepository {
     name: string,
     offsetAndLimit: IOffsetAndLimit,
   ): Promise<IUsers[]>;
+
+  abstract update(
+    userId: Types.ObjectId,
+    updateUserDto: UpdateUserDto,
+  ): Promise<UpdateResult>;
 }
