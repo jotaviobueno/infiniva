@@ -1,0 +1,9 @@
+import { Module } from '@nestjs/common';
+import { CategoryService } from './category.service';
+
+@Module({
+  imports: [],
+  providers: [CategoryService],
+  exports: [],
+})
+export class CategoryModule {}
