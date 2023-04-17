@@ -17,6 +17,7 @@ import { IOffsetAndLimit } from '../pagination/interfaces/ioffset-and-limit';
 import { PaginationService } from '../pagination/pagination.service';
 import * as bcrypt from 'bcrypt';
 import { GetStoreOptions } from './interfaces/get-store-options';
+import { Store } from 'src/repositories/implementations/mongodb/schemas/store.schema';
 
 @Injectable()
 export class StoreService {
@@ -161,10 +162,28 @@ export class StoreService {
   }
 
   async handleGetStore({ name, storeId, store_id }: GetStoreOptions) {
-    if (name) return await this.storeRepository.findByName(name);
+    if (name) {
+      const store = await this.storeRepository.findByName(name);
 
-    if (storeId) return await this.storeRepository.findById(storeId);
+      return this.handleStoreError(store);
+    }
 
-    if (store_id) return await this.storeRepository.findByStoreId(store_id);
+    if (storeId) {
+      const store = await this.storeRepository.findById(storeId);
+
+      return this.handleStoreError(store);
+    }
+
+    if (store_id) {
+      const store = await this.storeRepository.findByStoreId(store_id);
+
+      return this.handleStoreError(store);
+    }
+  }
+
+  private handleStoreError(store: Store) {
+    if (!store) throw new NotFoundException('store not found');
+
+    return store;
   }
 }
