@@ -64,15 +64,11 @@ export class UserService {
   async findByAccountId(account_id: string) {
     const userExist = await this.handleGetUser({ account_id });
 
-    if (!userExist) throw new NotFoundException('user not found');
-
     return toIUser(userExist);
   }
 
   async findByUsername(username: string) {
     const userExist = await this.handleGetUser({ username });
-
-    if (!userExist) throw new NotFoundException('username not found');
 
     return toIUser(userExist);
   }
@@ -82,12 +78,9 @@ export class UserService {
       if (updateUserDto.username === authAndUser.user.username)
         throw new ConflictException('username is equal');
 
-      const usernameAlreadyExist = await this.handleGetUser({
+      await this.handleGetUser({
         username: updateUserDto.username,
       });
-
-      if (usernameAlreadyExist)
-        throw new ConflictException('username already exists');
     }
 
     if (updateUserDto.password)
@@ -106,14 +99,38 @@ export class UserService {
     return `This action removes a #${id} user`;
   }
 
+  // Arrumar
   async handleGetUser({ userId, account_id, username, email }: GetUserOptions) {
-    if (userId) return await this.userRepository.findByUserId(userId);
+    if (userId) {
+      const user = await this.userRepository.findByUserId(userId);
 
-    if (account_id)
-      return await this.userRepository.findByAccountId(account_id);
+      if (!user) throw new NotFoundException('user not found');
 
-    if (username) return await this.userRepository.findByUsername(username);
+      return user;
+    }
 
-    if (email) return await this.userRepository.findByEmail(email);
+    if (account_id) {
+      const user = await this.userRepository.findByAccountId(account_id);
+
+      if (!user) throw new NotFoundException('user not found');
+
+      return user;
+    }
+
+    if (username) {
+      const user = await this.userRepository.findByUsername(username);
+
+      if (!user) throw new NotFoundException('user not found');
+
+      return user;
+    }
+
+    if (email) {
+      const user = await this.userRepository.findByEmail(email);
+
+      if (!user) throw new NotFoundException('user not found');
+
+      return user;
+    }
   }
 }
