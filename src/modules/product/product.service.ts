@@ -96,9 +96,7 @@ export class ProductService {
     product_id: string,
     updateProductDto: UpdateProductDto,
   ) {
-    const product = await this.productRepository.findByProductId(product_id);
-
-    if (!product) throw new NotFoundException('product not found');
+    const product = await this.getProduct(product_id);
 
     if (authAndUser.user._id.toString() != product.userId.toString())
       throw new ForbiddenException('you do not own this product');
@@ -107,9 +105,7 @@ export class ProductService {
   }
 
   async remove(authAndUser: IAuthAndUser, product_id: string) {
-    const product = await this.productRepository.findByProductId(product_id);
-
-    if (!product) throw new NotFoundException('product not found');
+    const product = await this.getProduct(product_id);
 
     if (authAndUser.user._id.toString() != product.userId.toString())
       throw new ForbiddenException('you do not own this product');
@@ -139,5 +135,13 @@ export class ProductService {
     }
 
     return 0;
+  }
+
+  public async getProduct(product_id: string) {
+    const product = await this.productRepository.findByProductId(product_id);
+
+    if (!product) throw new NotFoundException('product not found');
+
+    return product;
   }
 }
