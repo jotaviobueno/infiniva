@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
 import { CategoryService } from './category.service';
+import { MongodbModule } from 'src/repositories/implementations/mongodb/mongodb.module';
 
 @Module({
-  imports: [],
+  imports: [MongodbModule],
   providers: [CategoryService],
-  exports: [],
+  exports: [CategoryService],
 })
 export class CategoryModule {}
