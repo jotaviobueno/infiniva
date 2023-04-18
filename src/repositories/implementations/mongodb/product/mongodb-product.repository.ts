@@ -63,6 +63,10 @@ export class MongodbProductRepository implements ProductRepository {
     return await this.model.findOne({ product_id, deletedAt: null });
   }
 
+  async findById(productId: Types.ObjectId): Promise<Product> {
+    return await this.model.findOne({ _id: productId, deletedAt: null });
+  }
+
   async searchByName(
     name: string,
     { limit, offset }: IOffsetAndLimit,
@@ -96,9 +100,36 @@ export class MongodbProductRepository implements ProductRepository {
     );
   }
 
+  async addStock(
+    productId: Types.ObjectId,
+    stock: number,
+  ): Promise<UpdateResult> {
+    return await this.model.updateOne(
+      { _id: productId },
+      { $inc: { 'information.stock': stock } },
+    );
+  }
+
+  async removeStock(
+    productId: Types.ObjectId,
+    stock: number,
+  ): Promise<UpdateResult> {
+    return await this.model.updateOne(
+      { _id: productId },
+      { $inc: { 'information.stock': -stock } },
+    );
+  }
+
   async remove(productId: Types.ObjectId): Promise<UpdateResult> {
     return await this.model.updateOne(
       { _id: productId, deletedAt: null },
+      { deletedAt: new Date(), updatedAt: new Date() },
+    );
+  }
+
+  async deleteAllProducts(storeId: Types.ObjectId): Promise<UpdateResult> {
+    return await this.model.updateMany(
+      { storeId, deletedAt: null },
       { deletedAt: new Date(), updatedAt: new Date() },
     );
   }
