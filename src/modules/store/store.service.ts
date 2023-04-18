@@ -18,19 +18,23 @@ import { PaginationService } from '../pagination/pagination.service';
 import * as bcrypt from 'bcrypt';
 import { GetStoreOptions } from './interfaces/get-store-options';
 import { Store } from 'src/repositories/implementations/mongodb/schemas/store.schema';
+import { ProductRepository } from 'src/repositories/abstracts/product/product.repository';
 
 @Injectable()
 export class StoreService {
   constructor(
     private readonly storeRepository: StoreRepository,
+    private readonly productRepository: ProductRepository,
     private readonly userRepository: UserRepository,
     private readonly paginationService: PaginationService,
   ) {}
 
   async create(authAndUser: IAuthAndUser, createStoreDto: CreateStoreDto) {
-    const nameAlreadyExist = await this.handleGetStore({
-      name: createStoreDto.name,
-    });
+    const nameAlreadyExist = await this.storeRepository.findByName(
+      createStoreDto.name,
+    );
+
+    if (nameAlreadyExist) throw new ConflictException('name already exist');
 
     if (nameAlreadyExist)
       throw new ConflictException('name informed already exist');
@@ -157,8 +161,8 @@ export class StoreService {
 
     if (!passwordIsValid) throw new UnauthorizedException('password incorrect');
 
-    // Delete all products after
     await this.storeRepository.remove(store._id);
+    await this.productRepository.deleteAllProducts(store._id);
   }
 
   async handleGetStore({ name, storeId, store_id }: GetStoreOptions) {
