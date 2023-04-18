@@ -9,6 +9,7 @@ import { Store, StoreSchema } from './schemas/store.schema';
 import { Product, ProductSchema } from './schemas/product.schema';
 import { Category, CategorySchema } from './schemas/category.schema';
 import { Comment, CommentSchema } from './schemas/comment.schema';
+import { Cart, CartSchema } from './schemas/cart.schema';
 
 // Repositories
 import { UserRepository } from 'src/repositories/abstracts/user/user.repository';
@@ -29,6 +30,9 @@ import { MongodbCategoryRepository } from './category/mongodb-category.repositor
 import { CommentRepository } from 'src/repositories/abstracts/comment/comment.repository';
 import { MongodbCommentRepository } from './comment/mongodb-comment.repository';
 
+import { CartRepository } from 'src/repositories/abstracts/cart/cart.repository';
+import { MongodbCartRepository } from './cart/mongodb-cart.repository';
+
 @Module({
   imports: [
     MongooseModule.forRoot(MONGO_URI),
@@ -39,6 +43,7 @@ import { MongodbCommentRepository } from './comment/mongodb-comment.repository';
       { name: Product.name, schema: ProductSchema },
       { name: Category.name, schema: CategorySchema },
       { name: Comment.name, schema: CommentSchema },
+      { name: Cart.name, schema: CartSchema },
     ]),
   ],
   providers: [
@@ -70,6 +75,10 @@ import { MongodbCommentRepository } from './comment/mongodb-comment.repository';
       provide: CommentRepository,
       useClass: MongodbCommentRepository,
     },
+    {
+      provide: CartRepository,
+      useClass: MongodbCartRepository,
+    },
   ],
   exports: [
     UserRepository,
@@ -78,6 +87,7 @@ import { MongodbCommentRepository } from './comment/mongodb-comment.repository';
     ProductRepository,
     CategoryRepository,
     CommentRepository,
+    CartRepository,
   ],
 })
 export class MongodbModule {}
