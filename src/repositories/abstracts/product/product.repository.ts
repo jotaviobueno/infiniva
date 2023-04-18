@@ -20,6 +20,8 @@ export abstract class ProductRepository {
 
   abstract findByProductId(product_id: string): Promise<Product>;
 
+  abstract findById(productId: Types.ObjectId): Promise<Product>;
+
   abstract searchByName(
     name: string,
     offsetAndLimit: IOffsetAndLimit,
@@ -30,5 +32,17 @@ export abstract class ProductRepository {
     updateProductDto: UpdateProductDto,
   ): Promise<UpdateResult>;
 
+  abstract addStock(
+    productId: Types.ObjectId,
+    stock: number,
+  ): Promise<UpdateResult>;
+
+  abstract removeStock(
+    productId: Types.ObjectId,
+    stock: number,
+  ): Promise<UpdateResult>;
+
   abstract remove(productId: Types.ObjectId): Promise<UpdateResult>;
+
+  abstract deleteAllProducts(storeId: Types.ObjectId): Promise<UpdateResult>;
 }
